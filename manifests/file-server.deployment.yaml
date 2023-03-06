@@ -1,13 +1,38 @@
-apiVersion: v1
-kind: Service
+apiVersion: apps/v1
+kind: Deployment
 metadata:
   name: file-server
+  labels:
+    app: file-server
 spec:
   selector:
-    app: file-server
-  type: ClusterIP
-  ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 80
+    matchLabels:
+      app: file-server
+
+  template:
+    metadata:
+      labels:
+        app: file-server
+    spec:
+      volumes:
+        - name: file-storage
+          persistentVolumeClaim:
+            claimName: file-storage
+      containers:
+        - name: file-server
+          image: filebrowser/filebrowser
+          env:
+            - name: FB_NOAUTH
+              value: "noauth"
+
+          ports:
+            - containerPort: 80
+              name: "file-server"
+          volumeMounts:
+            - mountPath: "/srv"
+              name: file-storage
+
+status:
+  replicas: 1
+
 
