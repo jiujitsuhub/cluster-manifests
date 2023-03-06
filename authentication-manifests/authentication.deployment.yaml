@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: authentication
-          image: {{ .Values.applications.authentication.image }}
+          image: "vaggelas/authentication-application:26.0"
           env:
             - name: domain.name
               value: "myjiujitsuacademy.com"
