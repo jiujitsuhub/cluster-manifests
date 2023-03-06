@@ -1,0 +1,51 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: auth
+spec:
+  forwardAuth:
+    address: https://login.myjiujitsuacademy.com/auth
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: force-https
+spec:
+  headers:
+    frameDeny: true
+    sslRedirect: true
+    browserXssFilter: true
+    contentTypeNosniff: true
+    stsIncludeSubdomains: true
+    stsPreload: true
+    stsSeconds: 31536000
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: ingress
+spec:
+  entryPoints:
+    - websecure
+  routes:
+
+    - match: Host(`drive.myjiujitsuacademy.com`)
+      kind: Rule
+      middlewares:
+        - name: auth
+        - name: force-https
+      services:
+        - name: file-server
+          port: 80
+
+    - match: Host(`login.myjiujitsuacademy.com`)
+      kind: Rule
+      middlewares:
+        - name: force-https
+      services:
+        - name: authentication
+          port: 80
+  tls:
+    secretName: academy-ingress-secret
+

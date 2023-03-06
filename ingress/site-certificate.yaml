@@ -1,0 +1,14 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ .Values.ingress.certificateName }}
+spec:
+  secretName: {{ .Values.ingress.secretName }}
+  issuerRef:
+    name: letsencrypt-prod-my-academy
+    kind: ClusterIssuer
+  dnsNames:
+    - nextcloud.{{ .Values.ingress.host }}
+    - flowcharts.{{ .Values.ingress.host }}
+    - login.{{ .Values.ingress.host }}
+    - {{ .Values.ingress.host }}
