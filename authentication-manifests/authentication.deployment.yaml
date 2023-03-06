@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: authentication
+  labels:
+    app: authentication
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: authentication
+  template:
+    metadata:
+      labels:
+        app: authentication
+    spec:
+      containers:
+        - name: authentication
+          image: {{ .Values.applications.authentication.image }}
+          env:
+            - name: domain.name
+              value: "myjiujitsuacademy.com"
+          ports:
+            - containerPort: 8080
